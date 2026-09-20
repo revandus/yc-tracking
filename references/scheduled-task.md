@@ -1,4 +1,6 @@
-# Weekly unattended run — scheduled-task prompt
+# Weekly unattended run — scheduled task
+
+Created 2026-09-21 as `yc-nexus-scout-weekly` (Mondays 08:00 local, cron `0 8 * * 1`). Manage it from the Scheduled section of the Claude desktop app; the full prompt lives in `~/.claude/scheduled-tasks/yc-nexus-scout-weekly/SKILL.md`. Click "Run now" once to pre-approve the connector tools so later runs do not pause on permission prompts.
 
 Suggested `taskId`: `yc-nexus-scout-weekly`, cron `0 8 * * 1` (Mondays 8:00 local). Scheduled tasks run while the Claude desktop app is open; a missed run fires on next launch.
 

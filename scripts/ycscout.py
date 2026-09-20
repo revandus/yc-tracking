@@ -25,6 +25,32 @@ YC_API = "https://yc-oss.github.io/api/batches/{slug}.json"
 SEASON_ORDER = ["W", "X", "S", "F"]
 
 
+def geo_terms():
+    """Flatten config geo regions into (term, category, region) tuples, longest terms first."""
+    rows = []
+    for region, cats in CONFIG["geo"]["regions"].items():
+        for cat, terms in cats.items():
+            for t in terms:
+                rows.append((t, cat, region))
+    rows.sort(key=lambda r: -len(r[0]))
+    return rows
+
+
+GEO = geo_terms()
+
+
+def geo_hits(text, cats=None):
+    """Vocabulary hits in text, each tagged with category and region. Word-bounded, case-insensitive."""
+    low = (text or "").lower()
+    hits = []
+    for term, cat, region in GEO:
+        if cats and cat not in cats:
+            continue
+        if re.search(r"(?<![a-z])" + re.escape(term.lower()) + r"(?![a-z])", low):
+            hits.append({"term": term, "category": cat, "region": region})
+    return hits
+
+
 def out(obj):
     print(json.dumps(obj, indent=2, ensure_ascii=False))
 
@@ -151,7 +177,6 @@ def cmd_snapshot(args):
             die("fetch failed for %s: HTTP %s" % (url, e.code))
     except Exception as e:  # noqa
         die("fetch failed for %s: %s" % (url, e))
-    geo_words = CONFIG["geo"]["countries"] + CONFIG["geo"]["cities"]
     rows = []
     for c in data:
         loc = c.get("all_locations") or ""
@@ -162,7 +187,7 @@ def cmd_snapshot(args):
             "industry": c.get("industry"), "tags": c.get("tags") or [], "status": c.get("status"),
             "launched_at": dt.datetime.fromtimestamp(c["launched_at"], dt.timezone.utc).date().isoformat() if c.get("launched_at") else None,
             "yc_url": c.get("url"), "long_description": (c.get("long_description") or "")[:600],
-            "hq_geo_hit": [w for w in geo_words if w.lower() in loc.lower()],
+            "hq_geo_hit": geo_hits(loc, cats=("countries", "cities")),
         })
     folder = os.path.join(STATE, "snapshots", b["slug"])
     os.makedirs(folder, exist_ok=True)
@@ -185,7 +210,7 @@ def cmd_snapshot(args):
             changed.append({"yc_id": i, "name": r["name"], "changes": diffs})
     out({"batch": code, "slug": b["slug"], "note": note, "snapshot": path, "previous": prev_path if prev else None,
          "total": len(rows), "added": added, "removed": [{"yc_id": r["yc_id"], "name": r["name"]} for r in removed],
-         "changed": changed, "hq_geo_hits": [{"name": r["name"], "hq": r["hq"]} for r in rows if r["hq_geo_hit"]]})
+         "changed": changed, "hq_geo_hits": [{"name": r["name"], "hq": r["hq"], "regions": sorted({h["region"] for h in r["hq_geo_hit"]})} for r in rows if r["hq_geo_hit"]]})
 
 
 # ---------------- Harmonic saved-result harvest ----------------
@@ -310,13 +335,12 @@ def cmd_classify(args):
 # ---------------- geo scan ----------------
 def cmd_geo_scan(args):
     text = open(args.text).read() if os.path.exists(args.text) else args.text
-    low = text.lower()
-    hits = {}
-    for cat in ("countries", "cities", "institutions", "national_service", "employers_hq", "explicit_origin_phrases"):
-        found = sorted({w for w in CONFIG["geo"][cat] if re.search(r"(?<![a-z])" + re.escape(w.lower()) + r"(?![a-z])", low)})
-        if found:
-            hits[cat] = found
-    out(hits)
+    by_region = {}
+    for h in geo_hits(text):
+        bucket = by_region.setdefault(h["region"], {}).setdefault(h["category"], [])
+        if h["term"] not in bucket:
+            bucket.append(h["term"])
+    out(by_region)
 
 
 # ---------------- registry ----------------

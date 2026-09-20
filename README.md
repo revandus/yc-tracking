@@ -1,6 +1,6 @@
 # yc-tracking
 
-Claude Code skill `yc-nexus-scout`: a weekly scout of live and forming Y Combinator batches for founders and companies with evidence-backed ties to Southeast Asia or Korea, built on Harmonic and the public YC directory. The skill itself is `SKILL.md`.
+Claude Code skill `yc-nexus-scout`: a weekly scout of live and forming Y Combinator batches for founders and companies with evidence-backed ties to Southeast Asia, Korea, Australia, Hong Kong, Taiwan, Japan or China, built on Harmonic and the public YC directory. The skill itself is `SKILL.md`.
 
 ## Install
 
@@ -15,7 +15,7 @@ Start a new Claude Code session and the skill is available as `yc-nexus-scout`. 
 
 Nothing to install. It uses connectors already available in Claude Code (Harmonic, Affinity, Google Drive, Gmail) plus a standard-library Python helper. No API keys, no OAuth grant.
 
-Optional, recommended after the first two weeks: in the Harmonic console create a subscribed **People** saved search (education school = Y Combinator with an end date this year, current role founder, location or education in SEA/Korea) and paste its `urn:harmonic:saved_search:*` into `config.json › harmonic.person_saved_search_urn`. This catches founders who declare a batch on their profile before Harmonic tags their company.
+Optional, recommended after the first two weeks: in the Harmonic console create a subscribed **People** saved search (education school = Y Combinator with an end date this year, current role founder, location or education in a coverage region) and paste its `urn:harmonic:saved_search:*` into `config.json › harmonic.person_saved_search_urn`. This catches founders who declare a batch on their profile before Harmonic tags their company.
 
 ## First run
 

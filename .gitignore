@@ -1,0 +1,6 @@
+# run state: registry, snapshots, harvests, candidates, reports. Local to each machine.
+state/*
+!state/**/.gitkeep
+
+.DS_Store
+__pycache__/

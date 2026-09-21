@@ -1024,9 +1024,10 @@
     "recipients": [
       "christopher.halim@lsip.com"
     ],
-    "delivery": "drive_and_draft",
+    "delivery": "drive_and_email",
     "harmonic_list_upsert": true,
-    "outreach_drafts": true
+    "outreach_drafts": true,
+    "_delivery_comment": "drive_only | drive_and_draft | drive_and_email. Set to drive_and_email on 2026-09-21 at Chris's request: the weekly report is SENT to report.recipients, not left as a draft. Recipients must remain internal addresses only; never mail founders."
   },
   "thesis_notes": "Editable free text used for the 'why it might fit' line. Lightspeed SEA: early-stage (pre-seed to Series A) companies with founders tied to Southeast Asia, Korea, Australia, Hong Kong, Taiwan, Japan or China, building for global or regional scale. Priority themes: AI applications and infrastructure, fintech, B2B software, consumer platforms, deep tech with commercial traction. Under-weight: pure crypto trading, local-only services without expansion path."
 }

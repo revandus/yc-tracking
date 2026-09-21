@@ -146,10 +146,20 @@ def main():
         A(f"- {u.get('name')} ({u.get('batch')}): {u.get('reason')}")
     A("\n## Run log\n" + data.get("run_log", "- (not recorded)") + "\n- Feedback: `python3 scripts/ycscout.py feedback --key <domain> --verdict worth_meeting|maybe|no`\n")
 
-    out = os.path.join(ROOT, "state", "reports", f"{a.date}.md"); os.makedirs(os.path.dirname(out), exist_ok=True)
+    # Never clobber an existing report for the same date. A same-day rerun (e.g. a
+    # validation run of the cloud routine) would otherwise render a delta-only report
+    # over the full one and then push that over the good copy.
+    rdir = os.path.join(ROOT, "state", "reports"); os.makedirs(rdir, exist_ok=True)
+    stem = a.date
+    if os.path.exists(os.path.join(rdir, f"{stem}.md")):
+        n = 2
+        while os.path.exists(os.path.join(rdir, f"{a.date}-rerun{n}.md")):
+            n += 1
+        stem = f"{a.date}-rerun{n}"
+    out = os.path.join(rdir, f"{stem}.md")
     open(out, "w").write("\n".join(L))
     cut = next((i for i, l in enumerate(L) if l.lstrip().startswith("## 4. Entries")), len(L))
-    summ = os.path.join(ROOT, "state", "reports", f"{a.date}.summary.md"); open(summ, "w").write("\n".join(L[:cut]))
+    summ = os.path.join(rdir, f"{stem}.summary.md"); open(summ, "w").write("\n".join(L[:cut]))
     print(json.dumps({"report": out, "summary": summ, "latest": latest, "spotlight": len(spotlight), "new": len(new), "in_motion": len(motion), "lines": len(L)}))
 
 

@@ -24,7 +24,7 @@ Cloud runs get a clean checkout every time. Anything not committed does not exis
 | Runs when the Mac is off | no | yes |
 | Needs the desktop app open | yes | no |
 | State | read and written in place | cloned, then committed and pushed back |
-| Report delivery | file sent in chat, Drive, Gmail draft | Drive, Gmail draft, committed to `state/reports/`, posted in the run log |
+| Report delivery | file sent in chat, Drive, Gmail | Drive, Gmail (sent, not draft), committed to `state/reports/`, posted in the run log |
 | Cron timezone | local | **UTC** |
 | Minimum interval | any | 1 hour |
 
@@ -54,7 +54,7 @@ Steps:
 6. Write `state/candidates/report-data-<date>.json` (keys `main`, `appendix_likely`, `excluded`, `unenriched`, `counts`, `probe_note`, `run_log`), `state/candidates/known-status-<date>.json` and `state/candidates/contacts-<date>.json`, then run `python3 scripts/render_report.py --data … --known … --date <date> --contacts …`. Do not change the report layout; the renderer owns it.
 7. Deliver, in this order:
    - Upload `state/reports/<date>.summary.md` to Google Drive with `create_file` into the folder id in `state/drive.json`, using `textContent`, `contentMimeType` `text/markdown` and `disableConversionToGoogleType` true.
-   - Create a Gmail **draft** (never send) to christopher.halim@lsip.com with sections 1 to 3 as plain text.
+   - **Send** a Gmail message to christopher.halim@lsip.com (internal, the report owner) with sections 1 to 3 as plain text. Send only to that address; never mail a founder.
    - Add new main-list companies to the per-batch Harmonic lists cached in `state/harmonic_lists.json`, creating a list for a new batch with the same five fields.
    - `python3 scripts/ycscout.py registry-upsert` for every enriched company, with tier, inclusion reasons, status, fingerprint and report date.
 8. Commit and push the updated state so the next run remembers this one:

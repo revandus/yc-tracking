@@ -25,7 +25,7 @@ Paths are relative to `~/.claude/skills/yc-nexus-scout`. Call the helper as `pyt
 
 1. **No inference of origin.** Nationality is used only when stated in a profile or description and quotable. It is never inferred from a name, photo, surname or language. Formative ties (school, national service) are reported as proxies and labelled as such. See the rubric.
 2. **LinkedIn is read by humans, not by this skill.** Profile URLs come from Harmonic and are printed for the reader. Never scrape, automate, or message on LinkedIn.
-3. **Nothing is sent.** Outreach drafts live in the report. The digest goes to `report.recipients` as a Gmail draft unless config says otherwise.
+3. **No outbound contact.** Outreach drafts live in the report and are never sent to founders. The weekly report itself is emailed to `report.recipients` (internal addresses only) per `report.delivery`; never add an external recipient.
 4. **Affinity is read-only here.** Writes to Harmonic are limited to the scout lists named by `scout_list_name_pattern`.
 5. **Delta, not dump.** A company already in the registry with an unchanged fingerprint is not shown. A company marked `no` stays hidden until it materially changes.
 6. **Report faithfully.** Batches whose Harmonic cohort did not resolve, companies that could not be enriched, and any tool errors appear in the run log of the report.
@@ -78,7 +78,7 @@ Build `state/candidates/report-data-<date>.json` (main list = Confirmed plus wel
 3. **Already in motion**: compact table with who met whom and when.
 4. Per-company entries with the per-person "Included because" lines, then probe, appendices, run log.
 Founder names must be clickable LinkedIn links and each company must carry its contacts; a founder without a LinkedIn URL is shown as plain text with "no LinkedIn on record".
-Save to `state/reports/<date>.md`, send it to the user as a file, and upload the `.summary.md` (sections 1–3) with the Drive connector `create_file` (`textContent`, `contentMimeType` `text/markdown`, `disableConversionToGoogleType` true) into the folder cached in `state/drive.json`. Delivery: `drive_and_draft` creates a Gmail draft to `report.recipients` with sections 1–3 as plain text; `drive_and_email` sends it to those addresses only; `drive_only` skips mail.
+Save to `state/reports/<date>.md`, send it to the user as a file, and upload the `.summary.md` (sections 1–3) with the Drive connector `create_file` (`textContent`, `contentMimeType` `text/markdown`, `disableConversionToGoogleType` true) into the folder cached in `state/drive.json`. Delivery: `drive_and_email` (current setting) SENDS the report to `report.recipients` with sections 1–3 as plain text; `drive_and_draft` leaves it as a draft instead; `drive_only` skips mail. Recipients are internal only.
 If `report.harmonic_list_upsert` is true: the per-batch lists and their field/option URNs are cached in `state/harmonic_lists.json`; create a list for a new batch with `create_company_list` (fields Nexus tier, Why included, Regions, Scout status, First reported) and add new main-list companies with `add_companies_to_list` using option URNs from the cache.
 
 ### 8. Registry

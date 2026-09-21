@@ -1,5 +1,7 @@
 # Running the scout as a cloud routine
 
+**Live since 2026-09-21.** Routine `YC Nexus Scout Weekly`, id `trig_01JeaAj7RcED3dtuENomZrFz`, model claude-opus-5, cron `7 0 * * 1` UTC (Mondays 08:07 Asia/Singapore). Connectors attached: Harmonic, Affinity, Gmail, Google Drive. Manage at <https://claude.ai/code/routines/trig_01JeaAj7RcED3dtuENomZrFz>. The local desktop scheduled task `yc-nexus-scout-weekly` is PAUSED and kept only as a manual fallback.
+
 A cloud routine runs in Anthropic's cloud, not on your Mac, so it fires whether or not your computer is on. Each run is an isolated session with a **fresh clone of this repository** and no access to your local machine.
 
 ## Why the repo had to change

@@ -144,11 +144,11 @@ def main():
     A(f"\n\n## Appendix C — Could not be enriched ({len(unen)})\n")
     for u in unen:
         A(f"- {u.get('name')} ({u.get('batch')}): {u.get('reason')}")
-    A("\n## Run log\n" + data.get("run_log", "- (not recorded)") + "\n- Feedback: `python3 ~/.claude/skills/yc-nexus-scout/scripts/ycscout.py feedback --key <domain> --verdict worth_meeting|maybe|no`\n")
+    A("\n## Run log\n" + data.get("run_log", "- (not recorded)") + "\n- Feedback: `python3 scripts/ycscout.py feedback --key <domain> --verdict worth_meeting|maybe|no`\n")
 
     out = os.path.join(ROOT, "state", "reports", f"{a.date}.md"); os.makedirs(os.path.dirname(out), exist_ok=True)
     open(out, "w").write("\n".join(L))
-    cut = next((i for i, l in enumerate(L) if l.startswith("## 4. Entries")), len(L))
+    cut = next((i for i, l in enumerate(L) if l.lstrip().startswith("## 4. Entries")), len(L))
     summ = os.path.join(ROOT, "state", "reports", f"{a.date}.summary.md"); open(summ, "w").write("\n".join(L[:cut]))
     print(json.dumps({"report": out, "summary": summ, "latest": latest, "spotlight": len(spotlight), "new": len(new), "in_motion": len(motion), "lines": len(L)}))
 

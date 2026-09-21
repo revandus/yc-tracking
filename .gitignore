@@ -1,6 +1,11 @@
-# run state: registry, snapshots, harvests, candidates, reports. Local to each machine.
-state/*
-!state/**/.gitkeep
+# Scratch, regenerated on every run (bulky, no value across machines)
+state/candidates/
+state/harvest/
+
+# Durable state IS tracked on purpose: registry.jsonl, feedback.jsonl, snapshots/,
+# drive.json and harmonic_lists.json are the dedupe memory. Cloud routines get a
+# fresh checkout each run, so without these every run would re-report every company.
+# Reports are tracked too, so the weekly output is readable on GitHub.
 
 .DS_Store
 __pycache__/

@@ -45,11 +45,18 @@ def _yc_api_checkout(errors):
                 return YC_CACHE
             errors.append("git_fetch: " + (r.stderr or "").strip()[:160])
             return YC_CACHE  # a stale clone still beats nothing; caller reports the source
-        r = subprocess.run(["git", "clone", "--depth", "1", "-q", YC_GIT_REPO, YC_CACHE],
+        # Sparse, blobless clone of just batches/: ~1 MB instead of ~157 MB, which
+        # matters on an ephemeral cloud runner.
+        r = subprocess.run(["git", "clone", "--depth", "1", "-q", "--filter=blob:none",
+                            "--sparse", YC_GIT_REPO, YC_CACHE],
                            capture_output=True, text=True, timeout=600)
         if r.returncode != 0:
             errors.append("git_clone: " + ((r.stderr or "").strip()[:160] or "failed"))
             return None
+        r2 = subprocess.run(["git", "-C", YC_CACHE, "sparse-checkout", "set", "batches"],
+                            capture_output=True, text=True, timeout=180)
+        if r2.returncode != 0:
+            errors.append("sparse_checkout: " + ((r2.stderr or "").strip()[:160] or "failed"))
         return YC_CACHE
     except Exception as e:  # noqa
         errors.append("git: %s" % e)

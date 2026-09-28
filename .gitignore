@@ -9,3 +9,6 @@ state/harvest/
 
 .DS_Store
 __pycache__/
+
+# yc-oss/api shallow clone used as an egress-independent fallback for the YC directory
+state/.cache/

@@ -13,7 +13,7 @@ Commands (all print JSON to stdout):
   registry-upsert --json '{...}'         upsert one registry record (key = domain or yc slug or harmonic id)
   feedback --key K --verdict worth_meeting|maybe|no [--note ...]
 """
-import argparse, datetime as dt, hashlib, json, os, re, sys, urllib.error, urllib.request
+import argparse, datetime as dt, hashlib, json, os, re, subprocess, sys, urllib.error, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -21,7 +21,66 @@ STATE = os.path.join(ROOT, "state")
 CONFIG = json.load(open(os.path.join(ROOT, "config.json")))
 REGISTRY = os.path.join(STATE, "registry.jsonl")
 FEEDBACK = os.path.join(STATE, "feedback.jsonl")
-YC_API = "https://yc-oss.github.io/api/batches/{slug}.json"
+# The same dataset is reachable three ways. The cloud runner blocks arbitrary egress
+# but must reach github.com to clone this repo, so the git route is the reliable one
+# when the HTTP mirrors are refused. Tried in order; the winner is reported as `source`.
+YC_SOURCES = [
+    ("github_pages", "https://yc-oss.github.io/api/batches/{slug}.json"),
+    ("raw_github", "https://raw.githubusercontent.com/yc-oss/api/main/batches/{slug}.json"),
+]
+YC_GIT_REPO = "https://github.com/yc-oss/api"
+YC_CACHE = os.path.join(STATE, ".cache", "yc-oss-api")
+
+
+def _yc_api_checkout(errors):
+    """Shallow clone (or refresh) yc-oss/api locally and return its path, or None."""
+    try:
+        os.makedirs(os.path.dirname(YC_CACHE), exist_ok=True)
+        if os.path.isdir(os.path.join(YC_CACHE, ".git")):
+            r = subprocess.run(["git", "-C", YC_CACHE, "fetch", "--depth", "1", "-q", "origin", "main"],
+                               capture_output=True, text=True, timeout=300)
+            if r.returncode == 0:
+                subprocess.run(["git", "-C", YC_CACHE, "reset", "--hard", "-q", "FETCH_HEAD"],
+                               capture_output=True, timeout=60)
+                return YC_CACHE
+            errors.append("git_fetch: " + (r.stderr or "").strip()[:160])
+            return YC_CACHE  # a stale clone still beats nothing; caller reports the source
+        r = subprocess.run(["git", "clone", "--depth", "1", "-q", YC_GIT_REPO, YC_CACHE],
+                           capture_output=True, text=True, timeout=600)
+        if r.returncode != 0:
+            errors.append("git_clone: " + ((r.stderr or "").strip()[:160] or "failed"))
+            return None
+        return YC_CACHE
+    except Exception as e:  # noqa
+        errors.append("git: %s" % e)
+        return None
+
+
+def fetch_batch(slug):
+    """-> (status, rows, source, errors). status is ok | absent | failed."""
+    errors = []
+    for name, tmpl in YC_SOURCES:
+        url = tmpl.format(slug=slug)
+        try:
+            with urllib.request.urlopen(url, timeout=30) as r:
+                return "ok", json.load(r), name, errors
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return "absent", None, name, errors
+            errors.append("%s: HTTP %s" % (name, e.code))
+        except Exception as e:  # noqa
+            errors.append("%s: %s" % (name, e))
+    path = _yc_api_checkout(errors)
+    if path:
+        f = os.path.join(path, "batches", slug + ".json")
+        if os.path.exists(f):
+            try:
+                return "ok", json.load(open(f)), "git_clone", errors
+            except Exception as e:  # noqa
+                errors.append("git_clone parse: %s" % e)
+        else:
+            return "absent", None, "git_clone", errors
+    return "failed", None, None, errors
 SEASON_ORDER = ["W", "X", "S", "F"]
 
 
@@ -165,20 +224,18 @@ def latest_file(folder, suffix=".json", exclude=None):
 def cmd_snapshot(args):
     code = resolve_code(args.batch)
     b = batch_dates(code)
-    url = YC_API.format(slug=b["slug"])
     note = None
     fetch_error = None
     data = []
-    try:
-        with urllib.request.urlopen(url, timeout=30) as r:
-            data = json.load(r)
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            note = "YC directory has no page for %s yet (404); treating as empty" % b["slug"]
-        else:
-            fetch_error = "HTTP %s fetching %s" % (e.code, url)
-    except Exception as e:  # noqa
-        fetch_error = "%s fetching %s" % (e, url)
+    status, rows, source, errors = fetch_batch(b["slug"])
+    if status == "ok":
+        data = rows
+        if source != YC_SOURCES[0][0]:
+            note = "fetched via %s (earlier sources failed: %s)" % (source, "; ".join(errors))
+    elif status == "absent":
+        note = "YC directory has no page for %s yet (404 via %s); treating as empty" % (b["slug"], source)
+    else:
+        fetch_error = "all sources failed: " + "; ".join(errors)
 
     if fetch_error:
         # A sandboxed runner (e.g. the cloud routine) may have no egress to
@@ -234,7 +291,7 @@ def cmd_snapshot(args):
         diffs = {k: [p.get(k), r.get(k)] for k in ("name", "website", "hq", "one_liner", "team_size", "status", "tags") if p.get(k) != r.get(k)}
         if diffs:
             changed.append({"yc_id": i, "name": r["name"], "changes": diffs})
-    out({"batch": code, "slug": b["slug"], "note": note, "snapshot": path, "previous": prev_path if prev else None,
+    out({"batch": code, "slug": b["slug"], "source": source, "note": note, "snapshot": path, "previous": prev_path if prev else None,
          "total": len(rows), "added": added, "removed": [{"yc_id": r["yc_id"], "name": r["name"]} for r in removed],
          "changed": changed, "hq_geo_hits": [{"name": r["name"], "hq": r["hq"], "regions": sorted({h["region"] for h in r["hq_geo_hit"]})} for r in rows if r["hq_geo_hit"]]})
 

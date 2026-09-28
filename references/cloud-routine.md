@@ -1,6 +1,6 @@
 # Running the scout as a cloud routine
 
-**Live since 2026-09-21.** Routine `YC Nexus Scout Weekly`, id `trig_01JeaAj7RcED3dtuENomZrFz`, model claude-opus-5, cron `7 0 * * 1` UTC (Mondays 08:07 Asia/Singapore). Connectors attached: Harmonic, Affinity, Gmail, Google Drive. Manage at <https://claude.ai/code/routines/trig_01JeaAj7RcED3dtuENomZrFz>. The local desktop scheduled task `yc-nexus-scout-weekly` is PAUSED and kept only as a manual fallback.
+**Live since 2026-09-21.** Routine `YC Nexus Scout Weekly`, id `trig_01JeaAj7RcED3dtuENomZrFz`, model claude-opus-5, cron `7 0 * * 1` UTC (Mondays 08:07 Asia/Singapore). Connectors attached: Harmonic, Affinity, **Superhuman Mail**, Google Drive. Manage at <https://claude.ai/code/routines/trig_01JeaAj7RcED3dtuENomZrFz>. The local desktop scheduled task `yc-nexus-scout-weekly` is PAUSED and kept only as a manual fallback.
 
 A cloud routine runs in Anthropic's cloud, not on your Mac, so it fires whether or not your computer is on. Each run is an isolated session with a **fresh clone of this repository** and no access to your local machine.
 
@@ -14,7 +14,9 @@ Cloud runs get a clean checkout every time. Anything not committed does not exis
 ## Prerequisites
 
 1. **The repo must be on GitHub.** The routine clones `https://github.com/revandus/yc-tracking`. Push first.
-2. **The connectors must be claude.ai connectors**, connected at <https://claude.ai/customize/connectors>. MCP servers configured locally in Claude Code (`claude mcp add`) cannot be attached to a cloud routine. The routine needs: **Harmonic**, **Affinity**, **Gmail**, **Google Drive**. Calendar and Granola are not used by this skill.
+2. **The connectors must be claude.ai connectors**, connected at <https://claude.ai/customize/connectors>. MCP servers configured locally in Claude Code (`claude mcp add`) cannot be attached to a cloud routine. The routine needs: **Harmonic**, **Affinity**, **Superhuman Mail**, **Google Drive**. Calendar and Granola are not used.
+   - **Not Gmail.** The Gmail connector exposes only draft tools, no send, so it cannot honour `drive_and_email`. The 2026-09-28 run hit exactly this and left a draft. Superhuman Mail has `create_or_update_draft` + `send_draft`.
+4. **Egress.** The cloud runner blocks outbound HTTP by default, which killed the `yc-oss.github.io` snapshot fetch on 2026-09-21 and 2026-09-28 (403 on CONNECT). The routine declares those URLs in `user_declared_urls` on its event. If the fetch still fails, `--allow-stale` keeps the run going and flags the staleness rather than hiding it.
 3. The routine needs write access to the repo so it can push updated state.
 
 ## Differences from the local run

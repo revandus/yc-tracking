@@ -12,6 +12,7 @@ Bounded universe, weekly delta, evidence or nothing. Coverage is Southeast Asia,
 | Path | Purpose |
 |---|---|
 | `config.json` | Batch calendar and overrides, geo vocabularies, scoring tiers, Harmonic and Affinity list IDs, Drive folder, delivery. Read first, every run. |
+| `scripts/md_to_email_html.py` | Turns a report summary into email-ready HTML so tables and founder LinkedIn links survive. Plain text destroys both. |
 | `scripts/ycscout.py` | Deterministic helpers: batch phases, YC directory snapshots and diffs, Harmonic result harvesting, union, classify against the registry, geo vocabulary scan, registry and feedback. Run with no arguments for usage. |
 | `references/nexus-rubric.md` | Evidence types, points, decay, tiers, output record. |
 | `references/report-template.md` | The weekly report layout. |
@@ -49,7 +50,7 @@ Paths are relative to `~/.claude/skills/yc-nexus-scout`. Call the helper as `pyt
 
 ### 1. Universe, per batch (tracked and probe)
 **a. Harmonic cohort.** Call `search_companies_natural_language` with `query` = the batch's `harmonic_query`, `field_groups` = `["name_id_description_headcount_website", "location"]`, `size` = `harmonic.page_size_universe`. Large results are saved to a file by the tool; run `ycscout.py harvest <that file> --batch <CODE>`. If the result came back inline, save it to `state/harvest/<CODE>/raw-<n>.txt` first. Check the harvest output: `reported_count` is Harmonic's total, `has_next` means call again with the `cursor` and harvest again (harvest merges). If the harvest warns that no accelerator filter resolved, Harmonic does not have the cohort yet; record that and continue with the YC directory only. A probe batch with `harvest_total ≥ 1` is treated as forming from now on.
-**b. YC directory.** `ycscout.py snapshot <CODE>` fetches the public directory feed, stores a dated snapshot, and diffs against the previous one (`added`, `removed`, `changed`, `hq_geo_hits`). A 404 means the batch page does not exist yet.
+**b. YC directory.** `ycscout.py snapshot <CODE> --allow-stale` fetches the public directory feed, stores a dated snapshot, and diffs against the previous one (`added`, `removed`, `changed`, `hq_geo_hits`). A 404 means the batch page does not exist yet. If the fetch fails (a sandboxed runner with no egress to `yc-oss.github.io`), `--allow-stale` reuses the last snapshot and returns `stale: true` with `snapshot_date`; **you must then say in the run log that the YC half of the universe is as of that date.** Without the flag the command fails hard rather than pretending.
 **c. Union and classify.** `ycscout.py union --batch <CODE>` merges both sources by domain, then name. `ycscout.py classify --batch <CODE>` splits into `new`, `changed`, `seen`, `suppressed` and lists `to_enrich`.
 
 ### 2. Enrich only new and changed companies
@@ -78,7 +79,7 @@ Build `state/candidates/report-data-<date>.json` (main list = Confirmed plus wel
 3. **Already in motion**: compact table with who met whom and when.
 4. Per-company entries with the per-person "Included because" lines, then probe, appendices, run log.
 Founder names must be clickable LinkedIn links and each company must carry its contacts; a founder without a LinkedIn URL is shown as plain text with "no LinkedIn on record".
-Save to `state/reports/<date>.md`, send it to the user as a file, and upload the `.summary.md` (sections 1–3) with the Drive connector `create_file` (`textContent`, `contentMimeType` `text/markdown`, `disableConversionToGoogleType` true) into the folder cached in `state/drive.json`. Delivery: `drive_and_email` (current setting) SENDS the report to `report.recipients` with sections 1–3 as plain text; `drive_and_draft` leaves it as a draft instead; `drive_only` skips mail. Recipients are internal only.
+Save to `state/reports/<date>.md`, send it to the user as a file, and upload the `.summary.md` (sections 1–3) with the Drive connector `create_file` (`textContent`, `contentMimeType` `text/markdown`, `disableConversionToGoogleType` true) into the folder cached in `state/drive.json`. Delivery: `drive_and_email` (current setting) SENDS the report to `report.recipients`; `drive_and_draft` leaves it as a draft; `drive_only` skips mail. Recipients are internal only. Send with the **Superhuman Mail** connector (`create_or_update_draft` with `body` = the HTML from `scripts/md_to_email_html.py`, then `send_draft`). The Gmail connector exposes no send tool, so it cannot honour `drive_and_email`.
 If `report.harmonic_list_upsert` is true: the per-batch lists and their field/option URNs are cached in `state/harmonic_lists.json`; create a list for a new batch with `create_company_list` (fields Nexus tier, Why included, Regions, Scout status, First reported) and add new main-list companies with `add_companies_to_list` using option URNs from the cache.
 
 ### 8. Registry

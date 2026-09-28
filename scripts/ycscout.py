@@ -167,16 +167,42 @@ def cmd_snapshot(args):
     b = batch_dates(code)
     url = YC_API.format(slug=b["slug"])
     note = None
+    fetch_error = None
+    data = []
     try:
         with urllib.request.urlopen(url, timeout=30) as r:
             data = json.load(r)
     except urllib.error.HTTPError as e:
         if e.code == 404:
-            data, note = [], "YC directory has no page for %s yet (404); treating as empty" % b["slug"]
+            note = "YC directory has no page for %s yet (404); treating as empty" % b["slug"]
         else:
-            die("fetch failed for %s: HTTP %s" % (url, e.code))
+            fetch_error = "HTTP %s fetching %s" % (e.code, url)
     except Exception as e:  # noqa
-        die("fetch failed for %s: %s" % (url, e))
+        fetch_error = "%s fetching %s" % (e, url)
+
+    if fetch_error:
+        # A sandboxed runner (e.g. the cloud routine) may have no egress to
+        # yc-oss.github.io. Reusing the last snapshot keeps the run going, but the
+        # staleness must be loud and machine-readable, never silent.
+        folder = os.path.join(STATE, "snapshots", b["slug"])
+        prev = latest_file(folder)
+        if not args.allow_stale:
+            die(fetch_error + " (pass --allow-stale to fall back to the last snapshot)")
+        if not prev:
+            out({"batch": code, "slug": b["slug"], "stale": True, "fetch_error": fetch_error,
+                 "using_snapshot": None, "total": 0, "added": [], "removed": [], "changed": [],
+                 "hq_geo_hits": [], "note": "fetch failed and no previous snapshot exists"})
+            return
+        rows = json.load(open(prev))
+        out({"batch": code, "slug": b["slug"], "stale": True, "fetch_error": fetch_error,
+             "using_snapshot": prev, "snapshot_date": os.path.basename(prev)[:-5],
+             "total": len(rows), "added": [], "removed": [], "changed": [],
+             "hq_geo_hits": [{"name": r["name"], "hq": r["hq"],
+                              "regions": sorted({h["region"] for h in (r.get("hq_geo_hit") or [])})}
+                             for r in rows if r.get("hq_geo_hit")],
+             "note": "STALE: reused %s because the live fetch failed. The YC-directory half of the "
+                     "universe is as of that date; report this in the run log." % os.path.basename(prev)})
+        return
     rows = []
     for c in data:
         loc = c.get("all_locations") or ""
@@ -384,7 +410,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("batches"); s.add_argument("--date"); s.set_defaults(fn=cmd_batches)
-    s = sub.add_parser("snapshot"); s.add_argument("batch"); s.set_defaults(fn=cmd_snapshot)
+    s = sub.add_parser("snapshot"); s.add_argument("batch"); s.add_argument("--allow-stale", action="store_true", help="if the live fetch fails, reuse the last snapshot and flag it as stale instead of failing"); s.set_defaults(fn=cmd_snapshot)
     s = sub.add_parser("harvest"); s.add_argument("file"); s.add_argument("--batch", required=True); s.set_defaults(fn=cmd_harvest)
     s = sub.add_parser("union"); s.add_argument("--batch", required=True); s.set_defaults(fn=cmd_union)
     s = sub.add_parser("classify"); s.add_argument("--batch", required=True); s.set_defaults(fn=cmd_classify)

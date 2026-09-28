@@ -28,6 +28,15 @@ def desc(r):
     return (r.get("description") or r.get("one_liner") or "").strip().rstrip(".")
 
 
+def clip(text, n):
+    """Truncate on a word boundary with an ellipsis, so cells never end mid-word."""
+    text = (text or "").strip()
+    if len(text) <= n:
+        return text
+    cut = text[:n].rsplit(" ", 1)[0].rstrip(",;:-")
+    return (cut or text[:n]) + "…"
+
+
 def founders_cell(r, contacts):
     out = []
     for f in r.get("founders", []):
@@ -60,7 +69,7 @@ def contacts_cell(r, contacts):
 
 
 def why_cell(r):
-    return (r.get("primary_reason") or "")[:140]
+    return clip(r.get("primary_reason") or "", 160)
 
 
 def founder_line(f, contacts_for_company):
@@ -102,19 +111,19 @@ def main():
     A("| # | Company | What it does | Why included | Region | Tier | Status | Founders (LinkedIn) | Contacts |"); A("|---|---|---|---|---|---|---|---|---|")
     for i, r in enumerate(spotlight, 1):
         k = ks(r["name"])
-        A(f"| {i} | **{r['name']}** | {desc(r)[:100]} | {why_cell(r)} | {region_short(r.get('regions'))} | {r['tier'].title()} | {STATUS_LABEL[k['status']]} | {founders_cell(r, contacts)} | {contacts_cell(r, contacts)} |")
+        A(f"| {i} | **{r['name']}** | {clip(desc(r), 100)} | {why_cell(r)} | {region_short(r.get('regions'))} | {r['tier'].title()} | {STATUS_LABEL[k['status']]} | {founders_cell(r, contacts)} | {contacts_cell(r, contacts)} |")
 
     A(f"\n## 2. New to Lightspeed — all batches ({len(new)})\n")
     A("| # | Company | Batch | What it does | Why included | Region | Tier | Founders (LinkedIn) | Contacts | Warm path |"); A("|---|---|---|---|---|---|---|---|---|---|")
     for i, r in enumerate(new, 1):
         k = ks(r["name"])
-        A(f"| {i} | **{r['name']}** | {r['batch']} | {desc(r)[:100]} | {why_cell(r)} | {region_short(r.get('regions'))} | {r['tier'].title()} | {founders_cell(r, contacts)} | {contacts_cell(r, contacts)} | {k['warm']} |")
+        A(f"| {i} | **{r['name']}** | {r['batch']} | {clip(desc(r), 100)} | {why_cell(r)} | {region_short(r.get('regions'))} | {r['tier'].title()} | {founders_cell(r, contacts)} | {contacts_cell(r, contacts)} | {k['warm']} |")
 
     A(f"\n## 3. Already in motion with Lightspeed ({len(motion)})\n")
     A("| # | Company | Batch | What it does | Why included | Tier | Status (who, when) | Founders (LinkedIn) |"); A("|---|---|---|---|---|---|---|---|")
     for i, r in enumerate(motion, 1):
         k = ks(r["name"])
-        A(f"| {i} | **{r['name']}** | {r['batch']} | {desc(r)[:90]} | {why_cell(r)} | {r['tier'].title()} | {STATUS_LABEL[k['status']]}: {k['detail']} | {founders_cell(r, contacts)} |")
+        A(f"| {i} | **{r['name']}** | {r['batch']} | {clip(desc(r), 90)} | {why_cell(r)} | {r['tier'].title()} | {STATUS_LABEL[k['status']]}: {k['detail']} | {founders_cell(r, contacts)} |")
 
     A("\n## 4. Entries\n")
     for r in new + motion:

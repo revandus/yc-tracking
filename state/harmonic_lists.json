@@ -30,7 +30,7 @@
   "urn": "urn:harmonic:company_watchlist:d6c47470-ec7d-4eb2-b6d4-f5c52b9fbf9a",
   "console_link": "https://console.harmonic.ai/dashboard/watchlist/urn:harmonic:company_watchlist:d6c47470-ec7d-4eb2-b6d4-f5c52b9fbf9a",
   "created": "2026-09-21",
-  "entries": 16,
+  "entries": 20,
   "fields": {
    "Nexus tier": "urn:harmonic:company_list_custom_field:39681",
    "Why included": "urn:harmonic:company_list_custom_field:39682",
@@ -53,5 +53,5 @@
    }
   }
  },
- "_last_run": "2026-10-05"
+ "_last_run": "2026-10-12"
 }

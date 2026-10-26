@@ -30,7 +30,7 @@
   "urn": "urn:harmonic:company_watchlist:d6c47470-ec7d-4eb2-b6d4-f5c52b9fbf9a",
   "console_link": "https://console.harmonic.ai/dashboard/watchlist/urn:harmonic:company_watchlist:d6c47470-ec7d-4eb2-b6d4-f5c52b9fbf9a",
   "created": "2026-09-21",
-  "entries": 20,
+  "entries": 22,
   "fields": {
    "Nexus tier": "urn:harmonic:company_list_custom_field:39681",
    "Why included": "urn:harmonic:company_list_custom_field:39682",
@@ -53,5 +53,32 @@
    }
   }
  },
- "_last_run": "2026-10-12"
+ "_last_run": "2026-10-26",
+ "W27": {
+  "urn": "urn:harmonic:company_watchlist:5547d022-aa8c-484c-8a53-82c5f3ac6425",
+  "console_link": "https://console.harmonic.ai/dashboard/watchlist/urn:harmonic:company_watchlist:5547d022-aa8c-484c-8a53-82c5f3ac6425",
+  "created": "2026-10-26",
+  "entries": 1,
+  "fields": {
+   "Nexus tier": "urn:harmonic:company_list_custom_field:40382",
+   "Why included": "urn:harmonic:company_list_custom_field:40383",
+   "Regions": "urn:harmonic:company_list_custom_field:40384",
+   "Scout status": "urn:harmonic:company_list_custom_field:40385",
+   "First reported": "urn:harmonic:company_list_custom_field:40386"
+  },
+  "options": {
+   "Nexus tier": {
+    "Confirmed": "urn:harmonic:select_list_custom_field_value_option:37559c62-cd56-40a9-8595-43bbc5228856",
+    "Likely": "urn:harmonic:select_list_custom_field_value_option:9c749f33-d3b6-48aa-8aa8-7ebcb31f2849",
+    "Weak": "urn:harmonic:select_list_custom_field_value_option:ef61bb6d-8812-4e7d-8887-0a376b931995"
+   },
+   "Scout status": {
+    "New": "urn:harmonic:select_list_custom_field_value_option:153dc132-afe5-4e1f-b281-7f338c3cfe84",
+    "In Affinity": "urn:harmonic:select_list_custom_field_value_option:1b425cc4-4803-49b3-b6c3-0dc925fe9e1e",
+    "Contacted": "urn:harmonic:select_list_custom_field_value_option:6a0549fb-7698-4c0e-987c-d037dfe933a9",
+    "In process": "urn:harmonic:select_list_custom_field_value_option:815d854a-be0a-4eda-afcf-eee5989a5069",
+    "Met": "urn:harmonic:select_list_custom_field_value_option:559a8afb-29be-4e43-b738-3af5d6fb9501"
+   }
+  }
+ }
 }

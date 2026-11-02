@@ -1,0 +1,167 @@
+[
+ {
+  "yc_id": 32165,
+  "name": "Rote",
+  "yc_slug": "rote",
+  "website": "https://tryrote.com/",
+  "domain": "tryrote.com",
+  "hq": "San Francisco, CA, USA",
+  "one_liner": "AI-native insurance department for auto body shops",
+  "team_size": 0,
+  "industry": "B2B",
+  "tags": [
+   "B2B",
+   "Workflow Automation",
+   "Insurance"
+  ],
+  "status": "Active",
+  "launched_at": "2026-05-14",
+  "yc_url": "https://www.ycombinator.com/companies/rote",
+  "long_description": "Rote handles the entire negotiation lifecycle between shops and insurance companies to help them recover thousands of dollars in denied claims. Shops today lose millions per year because they lack the resources to negotiate with insurance companies that undervalue repair costs. Rote's agents recover denied revenue by taking shop estimates and referencing technical repair data to autonomously file and defend shop claims.",
+  "hq_geo_hit": []
+ },
+ {
+  "yc_id": 32263,
+  "name": "LinkLane",
+  "yc_slug": "linklane",
+  "website": "https://linklane.ai/",
+  "domain": "linklane.ai",
+  "hq": "San Francisco, CA, USA",
+  "one_liner": "AI-powered freight brokerage. Quote, book, and track loads in seconds.",
+  "team_size": 2,
+  "industry": "B2B",
+  "tags": [
+   "Digital Freight Brokerage",
+   "Marketplace",
+   "Workflow Automation"
+  ],
+  "status": "Active",
+  "launched_at": "2026-10-03",
+  "yc_url": "https://www.ycombinator.com/companies/linklane",
+  "long_description": "LinkLane helps businesses move freight with a click. Anyone can get a quote and book instantly, while our AI agents find the carrier, negotiate the rate, and manage every load from pickup to delivery. Trucking is a nearly $1 trillion market still run by call centers of brokers working the phones. We're bringing the Amazon experience to freight, making shipping cheaper and easier for every business.",
+  "hq_geo_hit": []
+ },
+ {
+  "yc_id": 35456,
+  "name": "Lucebox",
+  "yc_slug": "lucebox",
+  "website": "https://www.lucebox.com/",
+  "domain": "lucebox.com",
+  "hq": "Milan, Lombardy, Italy",
+  "one_liner": "Self-improving inference workstation",
+  "team_size": 2,
+  "industry": "Consumer",
+  "tags": [
+   "Hardware",
+   "Open Source"
+  ],
+  "status": "Active",
+  "launched_at": "2026-10-08",
+  "yc_url": "https://www.ycombinator.com/companies/lucebox",
+  "long_description": "Lucebox makes workstations for local AI inference. They're private, always-on machines that arrive with Lucebox's inference engine installed and tuned, so developers point Claude Code, Codex or OpenCode on their own hardware. Lucebox is building toward a new category of self-improving personal AI computers that learn from the work you do every day, training small models on your own context until they're faster and better than the cloud at your tasks. The engine is open source, with 2.9K stars on GitHub and 95K+ downloads on Hugging Face.",
+  "hq_geo_hit": []
+ },
+ {
+  "yc_id": 38358,
+  "name": "Plyxl",
+  "yc_slug": "plyxl",
+  "website": "https://plyxl.com/",
+  "domain": "plyxl.com",
+  "hq": "",
+  "one_liner": "The workspace that does the work",
+  "team_size": 4,
+  "industry": "B2B",
+  "tags": [
+   "B2B",
+   "Enterprise",
+   "AI"
+  ],
+  "status": "Active",
+  "launched_at": "2026-10-15",
+  "yc_url": "https://www.ycombinator.com/companies/plyxl",
+  "long_description": "Plyxl is the workspace that molds to your business. It builds apps, creates automations, and works across your entire company.",
+  "hq_geo_hit": []
+ },
+ {
+  "yc_id": 39117,
+  "name": "Godpack",
+  "yc_slug": "godpack",
+  "website": "https://godpack.gg/",
+  "domain": "godpack.gg",
+  "hq": "San Francisco, CA, USA",
+  "one_liner": "The marketplace for internet culture.",
+  "team_size": 2,
+  "industry": "Consumer",
+  "tags": [
+   "Marketplace",
+   "Consumer",
+   "Trading"
+  ],
+  "status": "Active",
+  "launched_at": "2026-10-13",
+  "yc_url": "https://www.ycombinator.com/companies/godpack",
+  "long_description": "",
+  "hq_geo_hit": []
+ },
+ {
+  "yc_id": 39381,
+  "name": "Nuum Robotics",
+  "yc_slug": "nuum-robotics",
+  "website": "https://nuumrobotics.com/",
+  "domain": "nuumrobotics.com",
+  "hq": "Waterloo, ON, Canada",
+  "one_liner": "Snake-like robots for maintenance inside machinery.",
+  "team_size": null,
+  "industry": "Industrials",
+  "tags": [
+   "Robotics",
+   "Energy",
+   "Aerospace",
+   "Automation"
+  ],
+  "status": "Active",
+  "launched_at": "2026-10-29",
+  "yc_url": "https://www.ycombinator.com/companies/nuum-robotics",
+  "long_description": "",
+  "hq_geo_hit": []
+ },
+ {
+  "yc_id": 40140,
+  "name": "Tesser",
+  "yc_slug": "tesser",
+  "website": "https://tesser.sh/",
+  "domain": "tesser.sh",
+  "hq": "",
+  "one_liner": "Seamless cloud dev environments",
+  "team_size": 0,
+  "industry": "B2B",
+  "tags": [
+   "Developer Tools"
+  ],
+  "status": "Active",
+  "launched_at": "2026-10-26",
+  "yc_url": "https://www.ycombinator.com/companies/tesser",
+  "long_description": "Tesser is a cloud development runtime that lets developers run multiple dev environments in parallel without overloading their laptops.\r\n\r\nOur CLI moves workloads like servers, builds, tests, and typechecking to isolated cloud machines while developers continue using their existing editors and coding agents. Tesser handles provisioning, networking, and port forwarding. Teams can access each other's environments through our gateway, share live previews, and run Tesser on our infrastructure or their own cloud (BYOC).\r\n",
+  "hq_geo_hit": []
+ },
+ {
+  "yc_id": 41229,
+  "name": "Colony",
+  "yc_slug": "colony",
+  "website": "https://colony.tech",
+  "domain": "colony.tech",
+  "hq": "Waterloo, ON, Canada",
+  "one_liner": "Long-range drone network for world data collection ",
+  "team_size": 3,
+  "industry": "Industrials",
+  "tags": [
+   "Drones",
+   "Aerospace"
+  ],
+  "status": "Active",
+  "launched_at": "2026-10-31",
+  "yc_url": "https://www.ycombinator.com/companies/colony",
+  "long_description": "",
+  "hq_geo_hit": []
+ }
+]

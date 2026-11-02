@@ -3,7 +3,7 @@
   "urn": "urn:harmonic:company_watchlist:4e99e113-c210-41ef-98f8-6794ce08d7e3",
   "console_link": "https://console.harmonic.ai/dashboard/watchlist/urn:harmonic:company_watchlist:4e99e113-c210-41ef-98f8-6794ce08d7e3",
   "created": "2026-09-21",
-  "entries": 54,
+  "entries": 63,
   "fields": {
    "Nexus tier": "urn:harmonic:company_list_custom_field:39676",
    "Why included": "urn:harmonic:company_list_custom_field:39677",
@@ -30,7 +30,7 @@
   "urn": "urn:harmonic:company_watchlist:d6c47470-ec7d-4eb2-b6d4-f5c52b9fbf9a",
   "console_link": "https://console.harmonic.ai/dashboard/watchlist/urn:harmonic:company_watchlist:d6c47470-ec7d-4eb2-b6d4-f5c52b9fbf9a",
   "created": "2026-09-21",
-  "entries": 20,
+  "entries": 36,
   "fields": {
    "Nexus tier": "urn:harmonic:company_list_custom_field:39681",
    "Why included": "urn:harmonic:company_list_custom_field:39682",
@@ -53,5 +53,12 @@
    }
   }
  },
- "_last_run": "2026-10-12"
+ "_last_run": {
+  "date": "2026-11-02",
+  "added": {
+   "F26": 16,
+   "S26": 9
+  },
+  "note": "All 25 main-list companies written with Nexus tier, Why included, Regions, Scout status and First reported. add_companies_to_list de-dupes server-side, so repeats of earlier weeks' entries were updated, not duplicated. No list created for W27/S27/X27 - no company from those batches qualified."
+ }
 }
